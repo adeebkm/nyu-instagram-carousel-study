@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Reels - NYU Ads Only</title>
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y148JRHLC9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y148JRHLC9', { 
+            debug_mode: true,
+            send_page_view: true
+        });
+        
+        // Debug: Log when GA4 loads
+        console.log('GA4 initialized with ID: G-Y148JRHLC9');
+        
+        // Test event to verify tracking works
+        gtag('event', 'page_view', {
+            page_title: 'Instagram Reels - NYU Ads Only',
+            page_location: window.location.href,
+            study_id: 'instagram_study'
+        });
+        
+        // Debug: Test gtag function
+        console.log('gtag function available:', typeof gtag);
+        console.log('dataLayer available:', window.dataLayer);
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            color: #262626;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .mobile-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #262626;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        
+        .reels-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .reels-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #262626;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .reels-container {
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        
+        .reels-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tap-to-start-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .tap-to-start-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tap-to-start-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .tap-to-start-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .tap-to-start-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .reel {
+            width: 100%;
+            height: calc(100vh - 60px);
+            scroll-snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .reel-carousel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            touch-action: pan-y;
+        }
+        
+        .reel-carousel-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .reel-carousel-slide {
+            min-width: 100%;
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+        
+        .reel-carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            background: #000;
+            user-select: none;
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+            pointer-events: none;
+        }
+        
+        .reel-carousel-dots {
+            position: absolute;
+            bottom: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        
+        .reel-carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .reel-carousel-dot.active {
+            background: #fff;
+            transform: scale(1.2);
+        }
+        
+        .reel-overlay {
+            position: absolute;
+            right: 12px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .reel-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .reel-action:active {
+            transform: scale(0.9);
+        }
+        
+        .reel-action-icon {
+            width: 32px;
+            height: 32px;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+            stroke-width: 1.5;
+        }
+        
+        .reel-action-count {
+            font-size: 11px;
+            font-weight: 600;
+            filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
+            text-align: center;
+        }
+        
+        .follow-button {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 12px;
+        }
+        
+        .follow-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .reel-info {
+            position: absolute;
+            bottom: 20px;
+            left: 12px;
+            right: 80px;
+            color: #fff;
+            z-index: 10;
+        }
+        
+        .reel-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .reel-profile-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid #fff;
+            background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .reel-profile-pic img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .reel-username {
+            font-weight: 600;
+            font-size: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+        
+        .reel-caption {
+            font-size: 14px;
+            margin-bottom: 6px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+            line-height: 1.3;
+        }
+        
+        .reel-liked-by {
+            font-size: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .reel-music {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+            opacity: 0.9;
+        }
+        
+        .music-note {
+            font-size: 14px;
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .ad-badge {
+            position: absolute;
+            top: 80px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        .bottom-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+            z-index: 5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- <a href="../index.html" class="back-button">← Back</a> -->
+        
+        <!-- Tap to Start Overlay -->
+        <div class="tap-to-start-overlay" id="tap-to-start-overlay">
+            <div class="tap-to-start-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+            </div>
+            <div class="tap-to-start-text">Tap to Start</div>
+        </div>
+        
+        <div class="reels-header">
+            <div class="reels-title">Reels</div>
+        </div>
+        
+        <div class="reels-container" id="reels-container">
+            <!-- NYU Admissions Carousel Ad -->
+            <div class="reel" data-reel="1">
+                <div class="reel-carousel">
+                    <div class="reel-carousel-track">
+                        <div class="reel-carousel-slide">
+                            <img src="assets/images/Exp-Images/NYU1.png" alt="NYU Ad 1" class="reel-carousel-image">
+                            <div class="ad-badge">Ad</div>
+                        </div>
+                        <div class="reel-carousel-slide">
+                            <img src="assets/images/Exp-Images/NYU2.png" alt="NYU Ad 2" class="reel-carousel-image">
+                            <div class="ad-badge">Ad</div>
+                        </div>
+                        <div class="reel-carousel-slide">
+                            <img src="assets/images/Exp-Images/NYU3.png" alt="NYU Ad 3" class="reel-carousel-image">
+                            <div class="ad-badge">Ad</div>
+                        </div>
+                        <div class="reel-carousel-slide">
+                            <img src="assets/images/Exp-Images/NYU4.png" alt="NYU Ad 4" class="reel-carousel-image">
+                            <div class="ad-badge">Ad</div>
+                        </div>
+                    </div>
+                    <div class="reel-carousel-dots">
+                        <div class="reel-carousel-dot active"></div>
+                        <div class="reel-carousel-dot"></div>
+                        <div class="reel-carousel-dot"></div>
+                        <div class="reel-carousel-dot"></div>
+                    </div>
+                </div>
+                <div class="reel-overlay">
+                    <div class="reel-action">
+                        <svg class="reel-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        <div class="reel-action-count">5.2K</div>
+                    </div>
+                    <div class="reel-action">
+                        <svg class="reel-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <div class="reel-action-count">234</div>
+                    </div>
+                    <div class="reel-action">
+                        <svg class="reel-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                        <div class="reel-action-count">Share</div>
+                    </div>
+                    <div class="reel-action">
+                        <svg class="reel-action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="5" r="1"/>
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="12" cy="19" r="1"/>
+                        </svg>
+                        <div class="reel-action-count">More</div>
+                    </div>
+                </div>
+                <div class="reel-info">
+                    <div class="reel-header">
+                        <div class="reel-profile-pic">
+                            <img src="assets/images/nyupfp.png" alt="Profile">
+                        </div>
+                        <div class="reel-username">nyu_admissions</div>
+                        <button class="follow-button">Follow</button>
+                    </div>
+                    <div class="reel-caption">Discover your potential at NYU! 🎓 Transform your future with world-class education. #NYU #Education #Future</div>
+                    <div class="reel-liked-by">Sponsored</div>
+                    <div class="reel-music">
+                        <span class="music-note">🎵</span>
+                        <span>NYU Admissions - Original Sound</span>
+                    </div>
+                </div>
+                <div class="bottom-gradient"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // NYU carousel tracker
+        let nyuCarouselTracker = {
+            slidesViewed: [],
+            dwellTime: {},
+            startTime: null,
+            currentSlide: 0,
+            totalInteractions: 0
+        };
+
+        // Reel content mapping
+        const reelContentMap = {
+            1: { username: 'nyu_admissions', content_type: 'carousel', description: 'NYU Stern MBA Ad' }
+        };
+
+        // Track every reel/post interaction
+        let reelTracker = {
+            reelViews: {},
+            reelDwellTime: {},
+            reelInteractions: {},
+            currentReel: null,
+            reelStartTime: null
+        };
+
+        function trackCarouselEvent(eventType, carouselElement, additionalData = {}) {
+            const reelElement = carouselElement.closest('[data-reel]');
+            const carouselId = reelElement ? reelElement.dataset.reel : 'unknown';
+            const currentSlide = additionalData.current_slide || 0;
+            const totalSlides = additionalData.total_slides || 0;
+            
+            let tracker = nyuCarouselTracker;
+            let carouselType = 'NYU_Admissions_Carousel';
+            let carouselContent = 'NYU_Stern_MBA_Ad';
+            
+            if (eventType === 'slide_change') {
+                if (tracker.startTime) {
+                    const dwellTime = (Date.now() - tracker.startTime) / 1000;
+                    tracker.dwellTime[tracker.currentSlide] = dwellTime;
+                }
+                tracker.startTime = Date.now();
+                tracker.currentSlide = currentSlide;
+                tracker.totalInteractions++;
+                if (!tracker.slidesViewed.includes(currentSlide)) {
+                    tracker.slidesViewed.push(currentSlide);
+                }
+            } else if (eventType === 'view') {
+                tracker.startTime = Date.now();
+                tracker.totalInteractions++;
+            }
+
+            const eventData = {
+                event: `carousel_${eventType}`,
+                carousel_id: carouselId,
+                carousel_type: carouselType,
+                carousel_content: carouselContent,
+                current_slide: currentSlide,
+                total_slides: totalSlides,
+                slides_viewed: [...tracker.slidesViewed],
+                slide_dwell_time: {...tracker.dwellTime},
+                total_interactions: tracker.totalInteractions,
+                study_id: 'instagram_study',
+                timestamp: Date.now(),
+                ...additionalData
+            };
+
+            gtag('event', eventData.event, eventData);
+            console.log('Carousel Event:', eventData);
+        }
+
+        function trackReelView(reelNumber) {
+            const reelInfo = reelContentMap[reelNumber];
+            if (!reelInfo) return;
+            
+            if (reelTracker.currentReel && reelTracker.reelStartTime) {
+                const dwellTime = (Date.now() - reelTracker.reelStartTime) / 1000;
+                if (!reelTracker.reelDwellTime[reelTracker.currentReel]) {
+                    reelTracker.reelDwellTime[reelTracker.currentReel] = 0;
+                }
+                reelTracker.reelDwellTime[reelTracker.currentReel] += dwellTime;
+            }
+            
+            reelTracker.currentReel = reelNumber;
+            reelTracker.reelStartTime = Date.now();
+            
+            if (!reelTracker.reelViews[reelNumber]) {
+                reelTracker.reelViews[reelNumber] = 0;
+            }
+            reelTracker.reelViews[reelNumber]++;
+            
+            if (!reelTracker.reelInteractions[reelNumber]) {
+                reelTracker.reelInteractions[reelNumber] = 0;
+            }
+            reelTracker.reelInteractions[reelNumber]++;
+            
+            const eventData = {
+                event: 'reel_view',
+                reel_number: reelNumber,
+                username: reelInfo.username,
+                content_type: reelInfo.content_type,
+                description: reelInfo.description,
+                view_count: reelTracker.reelViews[reelNumber],
+                total_dwell_time: reelTracker.reelDwellTime[reelNumber] || 0,
+                total_interactions: reelTracker.reelInteractions[reelNumber],
+                study_id: 'instagram_study',
+                timestamp: Date.now()
+            };
+            
+            gtag('event', eventData.event, eventData);
+            console.log('Reel View:', eventData);
+        }
+
+        function trackReelInteraction(reelNumber, interactionType, additionalData = {}) {
+            const reelInfo = reelContentMap[reelNumber];
+            if (!reelInfo) return;
+            
+            if (!reelTracker.reelInteractions[reelNumber]) {
+                reelTracker.reelInteractions[reelNumber] = 0;
+            }
+            reelTracker.reelInteractions[reelNumber]++;
+            
+            const eventData = {
+                event: `reel_${interactionType}`,
+                reel_number: reelNumber,
+                username: reelInfo.username,
+                content_type: reelInfo.content_type,
+                description: reelInfo.description,
+                interaction_type: interactionType,
+                total_interactions: reelTracker.reelInteractions[reelNumber],
+                study_id: 'instagram_study',
+                timestamp: Date.now(),
+                ...additionalData
+            };
+            
+            gtag('event', eventData.event, eventData);
+            console.log('Reel Interaction:', eventData);
+        }
+
+        function trackCTAClick(ctaElement, additionalData = {}) {
+            const eventData = {
+                event: 'cta_click',
+                cta_text: ctaElement.textContent,
+                cta_id: ctaElement.id || 'unknown',
+                cta_class: ctaElement.className,
+                timestamp: Date.now(),
+                ...additionalData
+            };
+
+            gtag('event', eventData.event, eventData);
+            console.log('CTA Click:', eventData);
+        }
+
+        // Initialize carousel functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - Setting up tracking');
+            
+            // Initialize carousels
+            const carousels = document.querySelectorAll('.reel-carousel');
+            carousels.forEach(carousel => {
+                const track = carousel.querySelector('.reel-carousel-track');
+                const slides = carousel.querySelectorAll('.reel-carousel-slide');
+                const dots = carousel.querySelectorAll('.reel-carousel-dot');
+                let currentSlide = 0;
+                
+                let startX = 0;
+                let isDragging = false;
+                
+                // Touch events
+                carousel.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                });
+                
+                carousel.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    
+                    const endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0 && currentSlide < slides.length - 1) {
+                            currentSlide++;
+                        } else if (diff < 0 && currentSlide > 0) {
+                            currentSlide--;
+                        }
+                        updateCarousel();
+                    }
+                    isDragging = false;
+                });
+                
+                // Mouse events
+                carousel.addEventListener('mousedown', (e) => {
+                    startX = e.clientX;
+                    isDragging = true;
+                });
+                
+                carousel.addEventListener('mouseup', (e) => {
+                    if (!isDragging) return;
+                    
+                    const endX = e.clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0 && currentSlide < slides.length - 1) {
+                            currentSlide++;
+                        } else if (diff < 0 && currentSlide > 0) {
+                            currentSlide--;
+                        }
+                        updateCarousel();
+                    }
+                    isDragging = false;
+                });
+                
+                // Dot navigation
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        currentSlide = index;
+                        updateCarousel();
+                    });
+                });
+                
+                function updateCarousel() {
+                    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    
+                    trackCarouselEvent('slide_change', carousel, {
+                        current_slide: currentSlide,
+                        total_slides: slides.length
+                    });
+                    
+                    dots.forEach((dot, index) => {
+                        dot.classList.toggle('active', index === currentSlide);
+                    });
+                }
+                
+                // Track initial view
+                trackCarouselEvent('view', carousel, {
+                    current_slide: 0,
+                    total_slides: slides.length
+                });
+            });
+            
+            // CTA click tracking
+            document.querySelectorAll('.reel-action').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const reelNumber = parseInt(button.closest('.reel').dataset.reel);
+                    
+                    let interactionType = 'unknown';
+                    const icon = button.querySelector('svg');
+                    if (icon) {
+                        const path = icon.querySelector('path');
+                        if (path) {
+                            const d = path.getAttribute('d');
+                            if (d.includes('M20.84 4.61')) interactionType = 'like';
+                            else if (d.includes('M21 15a2')) interactionType = 'comment';
+                            else if (d.includes('M22 2L11 13')) interactionType = 'share';
+                            else if (d.includes('circle cx="12"')) interactionType = 'more';
+                        }
+                    }
+                    
+                    trackReelInteraction(reelNumber, interactionType);
+                    trackCTAClick(button, {
+                        reel_number: reelNumber,
+                        action_type: 'reel_action'
+                    });
+                });
+            });
+
+            document.querySelectorAll('.follow-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const reelNumber = parseInt(button.closest('.reel').dataset.reel);
+                    trackReelInteraction(reelNumber, 'follow');
+                    trackCTAClick(button, {
+                        reel_number: reelNumber,
+                        action_type: 'follow_button'
+                    });
+                });
+            });
+            
+            // Tap to Start functionality
+            const tapToStartOverlay = document.getElementById('tap-to-start-overlay');
+            tapToStartOverlay.addEventListener('click', () => {
+                console.log('Tap to start clicked');
+                tapToStartOverlay.classList.add('hidden');
+                trackReelView(1);
+            });
+        });
+    </script>
+</body>
+</html>
