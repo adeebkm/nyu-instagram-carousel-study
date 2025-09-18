@@ -5,31 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instagram Reels - NYU Ads Only</title>
     
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y148JRHLC9"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-Y148JRHLC9', { 
-            debug_mode: true,
-            send_page_view: true
-        });
-        
-        // Debug: Log when GA4 loads
-        console.log('GA4 initialized with ID: G-Y148JRHLC9');
-        
-        // Test event to verify tracking works
-        gtag('event', 'page_view', {
-            page_title: 'Instagram Reels - NYU Ads Only',
-            page_location: window.location.href,
-            study_id: 'instagram_study'
-        });
-        
-        // Debug: Test gtag function
-        console.log('gtag function available:', typeof gtag);
-        console.log('dataLayer available:', window.dataLayer);
-    </script>
+    <!-- GA4 Tracking System -->
+    <script src="js/ga-lite.js"></script>
+    <script src="js/ga-carousel.js"></script>
 
     <style>
         * {
