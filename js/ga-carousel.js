@@ -39,13 +39,40 @@
         carouselState.totalSlides = slides.length;
         carouselState.slideViewedFlags = new Array(slides.length).fill(false);
         
-        // Track carousel start
-        trackCarouselStart();
-        
         // Set up navigation button listeners
         setupNavigationListeners();
         
-        // Track initial slide view
+        // Wait for tap-to-start before beginning tracking
+        waitForTapToStart();
+    }
+    
+    /**
+     * Wait for tap-to-start before beginning carousel tracking
+     */
+    function waitForTapToStart() {
+        const tapOverlay = document.getElementById('tap-to-start-overlay');
+        if (!tapOverlay) {
+            // No tap-to-start overlay, begin tracking immediately
+            startCarouselTracking();
+            return;
+        }
+        
+        // Check if overlay is already hidden
+        if (tapOverlay.classList.contains('hidden') || 
+            window.getComputedStyle(tapOverlay).display === 'none') {
+            startCarouselTracking();
+            return;
+        }
+        
+        // Wait for tap-to-start click
+        tapOverlay.addEventListener('click', startCarouselTracking, { once: true });
+    }
+    
+    /**
+     * Start carousel tracking after tap-to-start
+     */
+    function startCarouselTracking() {
+        trackCarouselStart();
         trackSlideView(0, 'start');
         carouselState.slideStartTime = Date.now();
     }

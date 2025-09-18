@@ -18,7 +18,7 @@
     };
     
     /**
-     * Get PROLIFIC_ID from URL query string or localStorage
+     * Get PROLIFIC_ID from URL query string, localStorage, or prompt
      */
     function getProlificId() {
         // Check URL query string first
@@ -35,13 +35,29 @@
             return prolificFromUrl;
         }
         
-        // Fallback to localStorage
+        // Check localStorage
         try {
-            return localStorage.getItem(PROLIFIC_ID_KEY);
+            const prolificFromStorage = localStorage.getItem(PROLIFIC_ID_KEY);
+            if (prolificFromStorage) {
+                return prolificFromStorage;
+            }
         } catch (e) {
             console.warn('Could not read PROLIFIC_ID from localStorage:', e);
-            return null;
         }
+        
+        // If neither URL nor localStorage has it, prompt user
+        const prolificFromPrompt = prompt('Please enter your Participant ID:');
+        if (prolificFromPrompt && prolificFromPrompt.trim()) {
+            const trimmedId = prolificFromPrompt.trim();
+            try {
+                localStorage.setItem(PROLIFIC_ID_KEY, trimmedId);
+            } catch (e) {
+                console.warn('Could not save PROLIFIC_ID to localStorage:', e);
+            }
+            return trimmedId;
+        }
+        
+        return null;
     }
     
     /**
