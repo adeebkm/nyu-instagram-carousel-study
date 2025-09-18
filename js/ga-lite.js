@@ -79,6 +79,8 @@
                     
                     if (window.GALite.userId) {
                         config.user_id = window.GALite.userId;
+                        gtag('set', 'user_properties', { participant_id: window.GALite.userId });
+
                     }
                     
                     gtag('config', GA_MEASUREMENT_ID, config);
@@ -96,7 +98,7 @@
     }
     
     /**
-     * Track custom event with automatic user_id inclusion
+     * Track custom event with automatic user_id and participant_id inclusion
      */
     function track(eventName, parameters = {}) {
         if (!window.GALite.isLoaded || typeof window.gtag !== 'function') {
@@ -109,6 +111,8 @@
             // Always include user_id if available
             if (window.GALite.userId) {
                 eventData.user_id = window.GALite.userId;
+                // Add participant_id as duplicate for GA4 reporting
+                eventData.participant_id = window.GALite.userId;
             }
             
             window.gtag('event', eventName, eventData);
