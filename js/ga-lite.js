@@ -7,7 +7,7 @@
     'use strict';
     
     // Configuration
-    const GA_MEASUREMENT_ID = 'G-XXXXXXXX'; // Will be replaced later
+    const GA_MEASUREMENT_ID = 'G-ELZDTBWQV3';
     const PROLIFIC_ID_KEY = 'prolific_id';
     
     // Global tracking state
