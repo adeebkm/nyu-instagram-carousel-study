@@ -18,45 +18,33 @@
     };
     
     /**
-     * Get PROLIFIC_ID from URL query string, localStorage, or prompt
+     * Get PROLIFIC_ID from URL query string or prompt (no localStorage storage)
      */
     function getProlificId() {
+        console.log('Getting PROLIFIC_ID...');
+        
         // Check URL query string first
         const urlParams = new URLSearchParams(window.location.search);
         const prolificFromUrl = urlParams.get('PROLIFIC_ID');
+        console.log('PROLIFIC_ID from URL:', prolificFromUrl);
         
         if (prolificFromUrl) {
-            // Save to localStorage for future visits
-            try {
-                localStorage.setItem(PROLIFIC_ID_KEY, prolificFromUrl);
-            } catch (e) {
-                console.warn('Could not save PROLIFIC_ID to localStorage:', e);
-            }
+            console.log('Using PROLIFIC_ID from URL:', prolificFromUrl);
             return prolificFromUrl;
         }
         
-        // Check localStorage
-        try {
-            const prolificFromStorage = localStorage.getItem(PROLIFIC_ID_KEY);
-            if (prolificFromStorage) {
-                return prolificFromStorage;
-            }
-        } catch (e) {
-            console.warn('Could not read PROLIFIC_ID from localStorage:', e);
-        }
-        
-        // If neither URL nor localStorage has it, prompt user
+        // If no URL parameter, always prompt user for fresh session
+        console.log('No PROLIFIC_ID in URL, prompting user...');
         const prolificFromPrompt = prompt('Please enter your Participant ID:');
+        console.log('User entered PROLIFIC_ID:', prolificFromPrompt);
+        
         if (prolificFromPrompt && prolificFromPrompt.trim()) {
             const trimmedId = prolificFromPrompt.trim();
-            try {
-                localStorage.setItem(PROLIFIC_ID_KEY, trimmedId);
-            } catch (e) {
-                console.warn('Could not save PROLIFIC_ID to localStorage:', e);
-            }
+            console.log('Using PROLIFIC_ID from prompt:', trimmedId);
             return trimmedId;
         }
         
+        console.log('No PROLIFIC_ID provided, returning null');
         return null;
     }
     
@@ -144,6 +132,16 @@
     window.GALite.init = initializeGA;
     window.GALite.track = track;
     window.GALite.trackPageView = trackPageView;
+    
+    // No localStorage storage - each session is independent
+    
+    // Clear any existing stored PROLIFIC_ID on page load (for research study independence)
+    try {
+        localStorage.removeItem(PROLIFIC_ID_KEY);
+        console.log('Cleared any existing PROLIFIC_ID for fresh session');
+    } catch (e) {
+        // Fail silently
+    }
     
     // Auto-initialize when DOM is ready
     if (document.readyState === 'loading') {

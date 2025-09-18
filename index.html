@@ -469,155 +469,9 @@
     </div>
 
     <script>
-        // NYU carousel tracker
-        let nyuCarouselTracker = {
-            slidesViewed: [],
-            dwellTime: {},
-            startTime: null,
-            currentSlide: 0,
-            totalInteractions: 0
-        };
+        // All tracking now handled by ga-carousel.js and ga-lite.js
 
-        // Reel content mapping
-        const reelContentMap = {
-            1: { username: 'nyu_admissions', content_type: 'carousel', description: 'NYU Stern MBA Ad' }
-        };
-
-        // Track every reel/post interaction
-        let reelTracker = {
-            reelViews: {},
-            reelDwellTime: {},
-            reelInteractions: {},
-            currentReel: null,
-            reelStartTime: null
-        };
-
-        function trackCarouselEvent(eventType, carouselElement, additionalData = {}) {
-            const reelElement = carouselElement.closest('[data-reel]');
-            const carouselId = reelElement ? reelElement.dataset.reel : 'unknown';
-            const currentSlide = additionalData.current_slide || 0;
-            const totalSlides = additionalData.total_slides || 0;
-            
-            let tracker = nyuCarouselTracker;
-            let carouselType = 'NYU_Admissions_Carousel';
-            let carouselContent = 'NYU_Stern_MBA_Ad';
-            
-            if (eventType === 'slide_change') {
-                if (tracker.startTime) {
-                    const dwellTime = (Date.now() - tracker.startTime) / 1000;
-                    tracker.dwellTime[tracker.currentSlide] = dwellTime;
-                }
-                tracker.startTime = Date.now();
-                tracker.currentSlide = currentSlide;
-                tracker.totalInteractions++;
-                if (!tracker.slidesViewed.includes(currentSlide)) {
-                    tracker.slidesViewed.push(currentSlide);
-                }
-            } else if (eventType === 'view') {
-                tracker.startTime = Date.now();
-                tracker.totalInteractions++;
-            }
-
-            const eventData = {
-                event: `carousel_${eventType}`,
-                carousel_id: carouselId,
-                carousel_type: carouselType,
-                carousel_content: carouselContent,
-                current_slide: currentSlide,
-                total_slides: totalSlides,
-                slides_viewed: [...tracker.slidesViewed],
-                slide_dwell_time: {...tracker.dwellTime},
-                total_interactions: tracker.totalInteractions,
-                study_id: 'instagram_study',
-                timestamp: Date.now(),
-                ...additionalData
-            };
-
-            gtag('event', eventData.event, eventData);
-            console.log('Carousel Event:', eventData);
-        }
-
-        function trackReelView(reelNumber) {
-            const reelInfo = reelContentMap[reelNumber];
-            if (!reelInfo) return;
-            
-            if (reelTracker.currentReel && reelTracker.reelStartTime) {
-                const dwellTime = (Date.now() - reelTracker.reelStartTime) / 1000;
-                if (!reelTracker.reelDwellTime[reelTracker.currentReel]) {
-                    reelTracker.reelDwellTime[reelTracker.currentReel] = 0;
-                }
-                reelTracker.reelDwellTime[reelTracker.currentReel] += dwellTime;
-            }
-            
-            reelTracker.currentReel = reelNumber;
-            reelTracker.reelStartTime = Date.now();
-            
-            if (!reelTracker.reelViews[reelNumber]) {
-                reelTracker.reelViews[reelNumber] = 0;
-            }
-            reelTracker.reelViews[reelNumber]++;
-            
-            if (!reelTracker.reelInteractions[reelNumber]) {
-                reelTracker.reelInteractions[reelNumber] = 0;
-            }
-            reelTracker.reelInteractions[reelNumber]++;
-            
-            const eventData = {
-                event: 'reel_view',
-                reel_number: reelNumber,
-                username: reelInfo.username,
-                content_type: reelInfo.content_type,
-                description: reelInfo.description,
-                view_count: reelTracker.reelViews[reelNumber],
-                total_dwell_time: reelTracker.reelDwellTime[reelNumber] || 0,
-                total_interactions: reelTracker.reelInteractions[reelNumber],
-                study_id: 'instagram_study',
-                timestamp: Date.now()
-            };
-            
-            gtag('event', eventData.event, eventData);
-            console.log('Reel View:', eventData);
-        }
-
-        function trackReelInteraction(reelNumber, interactionType, additionalData = {}) {
-            const reelInfo = reelContentMap[reelNumber];
-            if (!reelInfo) return;
-            
-            if (!reelTracker.reelInteractions[reelNumber]) {
-                reelTracker.reelInteractions[reelNumber] = 0;
-            }
-            reelTracker.reelInteractions[reelNumber]++;
-            
-            const eventData = {
-                event: `reel_${interactionType}`,
-                reel_number: reelNumber,
-                username: reelInfo.username,
-                content_type: reelInfo.content_type,
-                description: reelInfo.description,
-                interaction_type: interactionType,
-                total_interactions: reelTracker.reelInteractions[reelNumber],
-                study_id: 'instagram_study',
-                timestamp: Date.now(),
-                ...additionalData
-            };
-            
-            gtag('event', eventData.event, eventData);
-            console.log('Reel Interaction:', eventData);
-        }
-
-        function trackCTAClick(ctaElement, additionalData = {}) {
-            const eventData = {
-                event: 'cta_click',
-                cta_text: ctaElement.textContent,
-                cta_id: ctaElement.id || 'unknown',
-                cta_class: ctaElement.className,
-                timestamp: Date.now(),
-                ...additionalData
-            };
-
-            gtag('event', eventData.event, eventData);
-            console.log('CTA Click:', eventData);
-        }
+        // Old tracking functions removed - now handled by ga-carousel.js and ga-lite.js
 
         // Initialize carousel functionality
         document.addEventListener('DOMContentLoaded', () => {
@@ -691,10 +545,7 @@
                 function updateCarousel() {
                     track.style.transform = `translateX(-${currentSlide * 100}%)`;
                     
-                    trackCarouselEvent('slide_change', carousel, {
-                        current_slide: currentSlide,
-                        total_slides: slides.length
-                    });
+                    // Tracking handled by ga-carousel.js
                     
                     dots.forEach((dot, index) => {
                         dot.classList.toggle('active', index === currentSlide);
@@ -702,10 +553,7 @@
                 }
                 
                 // Track initial view
-                trackCarouselEvent('view', carousel, {
-                    current_slide: 0,
-                    total_slides: slides.length
-                });
+                // Initial view tracking handled by ga-carousel.js
             });
             
             // CTA click tracking
@@ -726,22 +574,14 @@
                         }
                     }
                     
-                    trackReelInteraction(reelNumber, interactionType);
-                    trackCTAClick(button, {
-                        reel_number: reelNumber,
-                        action_type: 'reel_action'
-                    });
+                    // CTA tracking now handled by ga-carousel.js
                 });
             });
 
             document.querySelectorAll('.follow-button').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const reelNumber = parseInt(button.closest('.reel').dataset.reel);
-                    trackReelInteraction(reelNumber, 'follow');
-                    trackCTAClick(button, {
-                        reel_number: reelNumber,
-                        action_type: 'follow_button'
-                    });
+                    // Follow button tracking now handled by ga-carousel.js
                 });
             });
             
@@ -750,7 +590,7 @@
             tapToStartOverlay.addEventListener('click', () => {
                 console.log('Tap to start clicked');
                 tapToStartOverlay.classList.add('hidden');
-                trackReelView(1);
+                // Tracking is now handled by ga-carousel.js
             });
         });
     </script>
