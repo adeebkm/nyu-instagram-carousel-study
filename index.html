@@ -625,13 +625,20 @@
             // Return to Survey functionality
             const returnSurveyBtn = document.getElementById('return-survey-btn');
             returnSurveyBtn.addEventListener('click', () => {
-                // Simple navigation back to previous page
+                // Go back to the page that linked here and close current page
                 if (document.referrer && document.referrer !== window.location.href) {
-                    // Go back to the page that linked here
+                    // Navigate back to referrer
                     window.location.href = document.referrer;
+                    // Attempt to close current tab/window after navigation
+                    setTimeout(() => {
+                        window.close();
+                    }, 100);
                 } else {
-                    // Fallback: use browser back button
+                    // Fallback: use browser back button then close
                     window.history.back();
+                    setTimeout(() => {
+                        window.close();
+                    }, 100);
                 }
             });
             
