@@ -74,7 +74,10 @@
                     // Configure GA with user_id if available
                     const config = {
                         send_page_view: true,
-                        debug_mode: false
+                        debug_mode: false,
+                        enhanced_measurement: {
+                            scroll_events: false
+                        }
                     };
                     
                     if (window.GALite.userId) {
