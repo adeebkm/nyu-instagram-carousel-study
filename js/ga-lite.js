@@ -18,7 +18,7 @@
     };
     
     /**
-     * Get PROLIFIC_ID from URL query string or prompt (no localStorage storage)
+     * Get PROLIFIC_ID from URL query string or mandatory prompt (no localStorage storage)
      */
     function getProlificId() {
         console.log('Getting PROLIFIC_ID...');
@@ -33,19 +33,33 @@
             return prolificFromUrl;
         }
         
-        // If no URL parameter, always prompt user for fresh session
-        console.log('No PROLIFIC_ID in URL, prompting user...');
-        const prolificFromPrompt = prompt('Please enter your Participant ID:');
-        console.log('User entered PROLIFIC_ID:', prolificFromPrompt);
+        // If no URL parameter, MANDATORY prompt - cannot be escaped
+        console.log('No PROLIFIC_ID in URL, prompting user (mandatory)...');
         
-        if (prolificFromPrompt && prolificFromPrompt.trim()) {
-            const trimmedId = prolificFromPrompt.trim();
-            console.log('Using PROLIFIC_ID from prompt:', trimmedId);
-            return trimmedId;
+        let prolificId = null;
+        while (!prolificId || prolificId.trim() === '') {
+            prolificId = prompt('⚠️ REQUIRED: Please enter your Participant ID to continue.\n\n(This cannot be skipped - press OK after entering your ID)');
+            
+            // If user pressed Cancel/Escape, show warning and try again
+            if (prolificId === null) {
+                alert('❌ Participant ID is required to participate in this study.\n\nPlease enter your ID when prompted.');
+                continue;
+            }
+            
+            // If user entered empty/whitespace, show warning and try again
+            if (prolificId.trim() === '') {
+                alert('❌ Please enter a valid Participant ID.\n\nEmpty entries are not allowed.');
+                continue;
+            }
+            
+            // Valid ID entered
+            prolificId = prolificId.trim();
+            console.log('User entered valid PROLIFIC_ID:', prolificId);
+            break;
         }
         
-        console.log('No PROLIFIC_ID provided, returning null');
-        return null;
+        console.log('Using PROLIFIC_ID from mandatory prompt:', prolificId);
+        return prolificId;
     }
     
     /**
@@ -164,3 +178,23 @@
     }
     
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
