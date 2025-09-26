@@ -625,21 +625,12 @@
             // Return to Survey functionality
             const returnSurveyBtn = document.getElementById('return-survey-btn');
             returnSurveyBtn.addEventListener('click', () => {
-                // Go back to the page that linked here and close current page
-                if (document.referrer && document.referrer !== window.location.href) {
-                    // Navigate back to referrer
-                    window.location.href = document.referrer;
-                    // Attempt to close current tab/window after navigation
-                    setTimeout(() => {
-                        window.close();
-                    }, 100);
-                } else {
-                    // Fallback: use browser back button then close
-                    window.history.back();
-                    setTimeout(() => {
-                        window.close();
-                    }, 100);
-                }
+                // Navigate back to the specific Qualtrics survey
+                window.location.href = 'https://gmu.az1.qualtrics.com/jfe/form/SV_eJcxun5CS6HHAVg';
+                // Attempt to close current tab/window after navigation
+                setTimeout(() => {
+                    window.close();
+                }, 100);
             });
             
             // Tap to Start functionality
