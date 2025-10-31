@@ -88,7 +88,7 @@
                     // Configure GA with user_id if available
                     const config = {
                         send_page_view: true,
-                        debug_mode: false,
+                        debug_mode: true, // Enable debug mode for troubleshooting
                         enhanced_measurement: {
                             scroll_events: false
                         }
@@ -101,6 +101,13 @@
                     }
                     
                     gtag('config', GA_MEASUREMENT_ID, config);
+                    
+                    // Debug logging
+                    console.log('🎯 GA4 configured with:', {
+                        measurementId: GA_MEASUREMENT_ID,
+                        userId: window.GALite.userId,
+                        debugMode: config.debug_mode
+                    });
                     
                     window.GALite.isLoaded = true;
                     resolve();
@@ -132,9 +139,12 @@
                 eventData.participant_id = window.GALite.userId;
             }
             
+            // Debug logging
+            console.log('📊 Tracking event:', eventName, eventData);
+            
             window.gtag('event', eventName, eventData);
         } catch (error) {
-            // Fail silently - no console errors
+            console.error('❌ GA4 tracking error:', error);
         }
     }
     
@@ -178,6 +188,20 @@
     }
     
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

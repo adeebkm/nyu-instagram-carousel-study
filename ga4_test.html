@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 Debug Test - Reel Carousel</title>
+    
+    <!-- Google Analytics 4 - Direct Implementation -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ELZDTBWQV3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        // Enable debug mode
+        gtag('config', 'G-ELZDTBWQV3', {
+            debug_mode: true,
+            send_page_view: true
+        });
+        
+        console.log('🎯 GA4 Test Page Loaded with G-ELZDTBWQV3');
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+        }
+        .console-log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 GA4 Debug Test</h1>
+        <p><strong>Measurement ID:</strong> G-ELZDTBWQV3</p>
+        <p><strong>Property ID:</strong> 505682374</p>
+        
+        <div class="status">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Open Chrome DevTools (F12)</li>
+                <li>Go to Console tab</li>
+                <li>Click the test buttons below</li>
+                <li>Check GA4 DebugView in another tab</li>
+                <li>Look for events in real-time</li>
+            </ol>
+        </div>
+        
+        <button onclick="testPageView()">🔄 Test Page View</button>
+        <button onclick="testCustomEvent()">⚡ Test Custom Event</button>
+        <button onclick="testCarouselStart()">🎠 Test Carousel Start</button>
+        
+        <div id="console-output" class="console-log"></div>
+    </div>
+
+    <script>
+        let logOutput = document.getElementById('console-output');
+        
+        function log(message) {
+            console.log(message);
+            logOutput.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        function testPageView() {
+            log('🔄 Sending page_view event...');
+            gtag('event', 'page_view', {
+                page_title: 'GA4 Test Page',
+                page_location: window.location.href,
+                custom_parameter: 'test_value'
+            });
+        }
+        
+        function testCustomEvent() {
+            log('⚡ Sending custom test event...');
+            gtag('event', 'test_event', {
+                event_category: 'debug',
+                event_label: 'manual_test',
+                value: 1,
+                participant_id: 'TEST_USER_123'
+            });
+        }
+        
+        function testCarouselStart() {
+            log('🎠 Sending carousel_start event...');
+            gtag('event', 'carousel_start', {
+                total_slides: 4,
+                participant_id: 'TEST_USER_123',
+                user_id: 'TEST_USER_123'
+            });
+        }
+        
+        // Auto-test on page load
+        setTimeout(() => {
+            log('🎯 GA4 Test Page Ready');
+            log('📊 Check GA4 DebugView: https://analytics.google.com/analytics/web/#/p505682374/reports/intelligenthome');
+        }, 1000);
+    </script>
+</body>
+</html>
